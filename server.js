@@ -37,7 +37,7 @@ app.get("/robots.txt", (_req, res) => {
 });
 
 app.use((req, res, next) => {
-  if (req.method !== "GET" || !SITE_URL) return next();
+  if (req.method !== "GET") return next();
 
   let file = req.path === "/" ? "index.html" : req.path.replace(/^\//, "");
   if (!file.endsWith(".html") || !PAGE_META[file]) return next();
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
   if (!fs.existsSync(fullPath)) return next();
 
   let html = fs.readFileSync(fullPath, "utf8");
-  const seo = getSeoInjection(file, SITE_URL);
+  const seo = SITE_URL ? getSeoInjection(file, SITE_URL) : getFaviconTags();
   html = html.includes("<!--SAIRAS_SEO-->")
     ? html.replace("<!--SAIRAS_SEO-->", seo)
     : html.replace("</head>", `${seo}\n</head>`);

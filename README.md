@@ -44,7 +44,7 @@ Tämä aktivoi canonical-linkit, Open Graph, JSON-LD, `sitemap.xml` ja `robots.t
 
 - **`/llms.txt`** — tiivis yhteenveto AI-assistenteille (ChatGPT, Claude, Perplexity)
 - **`/llms-full.txt`** — laajempi referenssi
-- Faviconit: `npm run build:favicons` (generoi `/icons/` logosta)
+- Favicon: käyttää suoraan `/logo.png`
 
 Hakukoneet: lähetä sitemap Google Search Consolessa (`https://sairasmedia.fi/sitemap.xml`).
 
