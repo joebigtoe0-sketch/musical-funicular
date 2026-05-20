@@ -7,7 +7,7 @@ const express = require("express");
 const { handleChatRequest } = require("./lib/chat");
 const { handleContactRequest } = require("./lib/contact");
 const { getEmailProvider } = require("./lib/email");
-const { getSeoInjection, buildSitemap, buildRobots, PAGE_META } = require("./lib/seo");
+const { getSeoInjection, getFaviconTags, buildSitemap, buildRobots, PAGE_META } = require("./lib/seo");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
