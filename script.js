@@ -121,6 +121,66 @@ document.addEventListener("DOMContentLoaded", () => {
     counters.forEach((c) => counterObserver.observe(c));
   }
 
+  // ─── Tarjouspyyntölomake → sähköposti ───────────────────────
+  const quoteForm = document.getElementById("quote-form");
+  const formStatus = document.getElementById("form-status");
+  const quoteSubmit = document.getElementById("quote-submit");
+
+  if (quoteForm && formStatus) {
+    quoteForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!quoteForm.reportValidity()) return;
+
+      const fd = new FormData(quoteForm);
+      const payload = {
+        type: "quote",
+        name: fd.get("name")?.toString().trim() || "",
+        email: fd.get("email")?.toString().trim() || "",
+        phone: fd.get("phone")?.toString().trim() || "",
+        company: fd.get("company")?.toString().trim() || "",
+        message: fd.get("message")?.toString().trim() || "",
+        sourcePage: window.location.href,
+        _gotcha: fd.get("_gotcha")?.toString() || "",
+      };
+
+      if (quoteSubmit) {
+        quoteSubmit.disabled = true;
+        quoteSubmit.textContent = "Lähetetään…";
+      }
+      formStatus.textContent = "";
+      formStatus.className = "contact-form-note form-status";
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.error || "Lähetys epäonnistui");
+        }
+
+        quoteForm.reset();
+        formStatus.textContent = "Kiitos! Viestisi on lähetetty — palaamme asiaan pian.";
+        formStatus.classList.add("form-status--success");
+      } catch (err) {
+        formStatus.textContent =
+          err.message === "Sähköposti ei ole konfiguroitu"
+            ? "Lomake ei ole vielä käytössä. Ota yhteyttä: info@sairasmedia.fi"
+            : `Lähetys epäonnistui. Yritä uudelleen tai lähetä sähköpostia: info@sairasmedia.fi`;
+        formStatus.classList.add("form-status--error");
+      } finally {
+        if (quoteSubmit) {
+          quoteSubmit.disabled = false;
+          quoteSubmit.textContent = "Lähetä viesti";
+        }
+      }
+    });
+  }
+
   // ─── Respect prefers-reduced-motion ─────────────────────────
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     document.querySelectorAll("[style*='opacity']").forEach((el) => {

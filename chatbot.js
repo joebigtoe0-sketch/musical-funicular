@@ -6,6 +6,7 @@ class SairasChatbot {
     this.greetingShown = false;
     this.calendlyUrl = window.SAIRAS_CALENDLY_URL || "";
     this.apiUrl = "/api/chat";
+    this.leadEmailSent = false;
     this.init();
   }
 
@@ -62,22 +63,33 @@ class SairasChatbot {
     this.renderMessages();
   }
 
-  checkForLeadInfo(assistantMsg, userMsg) {
+  checkForLeadInfo(_assistantMsg, userMsg) {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
     const emailMatch = userMsg.match(emailRegex);
-    if (emailMatch) {
-      this.saveLead({ email: emailMatch[0], conversation: this.messages });
-    }
+    if (!emailMatch || this.leadEmailSent) return;
+
+    this.leadEmailSent = true;
+    this.notifyLeadByEmail({ email: emailMatch[0], userMsg });
   }
 
-  saveLead(leadData) {
+  async notifyLeadByEmail({ email, userMsg }) {
+    const nameMatch = userMsg.match(/(?:olen|nimi(?:ni)?|nimeni)\s+([A-ZÄÖÅa-zäöå][a-zäöå]+(?:\s+[A-ZÄÖÅa-zäöå][a-zäöå]+)?)/i);
+
     try {
-      const existing = JSON.parse(localStorage.getItem("sairas_leads") || "[]");
-      existing.push({ ...leadData, savedAt: new Date().toISOString() });
-      localStorage.setItem("sairas_leads", JSON.stringify(existing));
-      console.log("Lead saved:", leadData);
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "chatbot",
+          email,
+          name: nameMatch?.[1] || "",
+          message: userMsg.slice(0, 2000),
+          conversation: this.messages,
+          sourcePage: window.location.href,
+        }),
+      });
     } catch (e) {
-      console.log("Lead save failed", e);
+      console.warn("Lead email failed", e);
     }
   }
 

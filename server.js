@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require("express");
 const { handleChatRequest } = require("./lib/chat");
+const { handleContactRequest } = require("./lib/contact");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,8 @@ app.use(express.json({ limit: "100kb" }));
 
 app.post("/api/chat", (req, res) => handleChatRequest(req, res));
 app.options("/api/chat", (req, res) => handleChatRequest(req, res));
+
+app.post("/api/contact", (req, res) => handleContactRequest(req, res));
 
 app.use((req, res, next) => {
   if (BLOCKED_STATIC.test(req.path)) return res.sendStatus(404);

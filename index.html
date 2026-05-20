@@ -320,7 +320,8 @@
           <p>Vastaamme vuorokauden sisällä. Kerro lyhyesti projektistasi.</p>
         </header>
         <div class="contact-layout">
-          <form class="contact-form contact-form--wide" action="#" method="post">
+          <form id="quote-form" class="contact-form contact-form--wide" action="/api/contact" method="post" novalidate>
+            <input type="text" name="_gotcha" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <div class="form-row">
               <div class="form-field">
                 <label for="company">Yritys (valinnainen)</label>
@@ -345,7 +346,8 @@
               <label for="message">Viesti</label>
               <textarea id="message" name="message" rows="5" placeholder="Kerro lyhyesti projektistasi tai tarpeestasi..."></textarea>
             </div>
-            <button type="submit" class="btn btn-primary btn-full">Lähetä viesti</button>
+            <button type="submit" class="btn btn-primary btn-full" id="quote-submit">Lähetä viesti</button>
+            <p class="contact-form-note form-status" id="form-status" role="status" aria-live="polite"></p>
             <p class="contact-form-note">Vastaamme vuorokauden sisällä arkisin.</p>
           </form>
           <aside class="contact-sidebar" aria-label="Yhteystiedot">
