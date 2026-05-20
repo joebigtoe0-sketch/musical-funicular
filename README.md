@@ -32,6 +32,36 @@ Railway Variables:
 
 Vastaanotto pysyy one.comissa; lähetys menee Resendin kautta.
 
+## SEO ja AI-löydettävyys
+
+Aseta Railwayssä:
+
+```
+SITE_URL=https://sairasmedia.fi
+```
+
+Tämä aktivoi canonical-linkit, Open Graph, JSON-LD, `sitemap.xml` ja `robots.txt`.
+
+- **`/llms.txt`** — tiivis yhteenveto AI-assistenteille (ChatGPT, Claude, Perplexity)
+- **`/llms-full.txt`** — laajempi referenssi
+- Faviconit: `npm run build:favicons` (generoi `/icons/` logosta)
+
+Hakukoneet: lähetä sitemap Google Search Consolessa (`https://sairasmedia.fi/sitemap.xml`).
+
+### Google Search Console -vahvistus
+
+1. Avaa [Google Search Console](https://search.google.com/search-console)
+2. **Lisää resurssi** → URL-etuliite → `https://sairasmedia.fi`
+3. Vahvistus: valitse **HTML-tunniste**
+4. Google näyttää tagin, esim.  
+   `<meta name="google-site-verification" content="VAIN_TAMA_KOODI" />`
+5. Kopioi **vain** `content`-kentän arvo (ei koko tagia)
+6. Railway → Variables → `GOOGLE_SITE_VERIFICATION=VAIN_TAMA_KOODI`
+7. Redeploy → avaa etusivu → View Source → varmista että meta-tagi näkyy
+8. Search Consolessa paina **Vahvista**
+
+Puhelin: päivitä `lib/site.js` jos numero muuttuu.
+
 ## Railway-deploy
 
 Katso alla olevat ohjeet tai [Railway docs](https://docs.railway.app/).
