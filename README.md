@@ -20,15 +20,17 @@ npm run dev
 
 ## Tarjouspyyntö → sähköposti
 
-Lomake (`index.html`) ja chatbot-liidit lähetetään `CONTACT_EMAIL`-osoitteeseen SMTP:n kautta.
+Lomake ja chatbot lähettävät viestit `CONTACT_EMAIL`-osoitteeseen.
 
-Railway Variables (pakolliset sähköpostille):
+**Railway:** käytä **Resend**-API:a. one.com SMTP (`send.one.com`) ei toimi Railway-palvelimelta (yhteys timeout).
 
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
-- `CONTACT_EMAIL` — vastaanottaja
-- `EMAIL_FROM` — lähettäjä (esim. `"Sairas Media <info@sairasmedia.fi>"`)
+Railway Variables:
 
-**Gmail:** Google Account → Security → 2FA → App passwords → käytä sitä `SMTP_PASS`:ina.
+- `RESEND_API_KEY` — [resend.com](https://resend.com) → API Keys
+- `CONTACT_EMAIL` — `info@sairasmedia.fi`
+- `EMAIL_FROM` — `Sairas Media <noreply@sairasmedia.fi>` (domain vahvistettu Resendissä)
+
+Vastaanotto pysyy one.comissa; lähetys menee Resendin kautta.
 
 ## Railway-deploy
 

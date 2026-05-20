@@ -151,11 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
       formStatus.textContent = "";
       formStatus.className = "contact-form-note form-status";
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000);
+
       try {
         const res = await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
+          signal: controller.signal,
         });
         const data = await res.json().catch(() => ({}));
 
@@ -167,12 +171,21 @@ document.addEventListener("DOMContentLoaded", () => {
         formStatus.textContent = "Kiitos! Viestisi on lähetetty — palaamme asiaan pian.";
         formStatus.classList.add("form-status--success");
       } catch (err) {
-        formStatus.textContent =
-          err.message === "Sähköposti ei ole konfiguroitu"
-            ? "Lomake ei ole vielä käytössä. Ota yhteyttä: info@sairasmedia.fi"
-            : `Lähetys epäonnistui. Yritä uudelleen tai lähetä sähköpostia: info@sairasmedia.fi`;
+        let msg = `Lähetys epäonnistui. Yritä uudelleen tai lähetä sähköpostia: info@sairasmedia.fi`;
+
+        if (err.name === "AbortError") {
+          msg =
+            "Lähetys kesti liian kauan. SMTP-yhteys voi olla estetty — tarkista Railway-lokit ja one.com-asetukset.";
+        } else if (err.message === "Sähköposti ei ole konfiguroitu") {
+          msg = "Lomake ei ole vielä käytössä. Ota yhteyttä: info@sairasmedia.fi";
+        } else if (err.message) {
+          msg = err.message;
+        }
+
+        formStatus.textContent = msg;
         formStatus.classList.add("form-status--error");
       } finally {
+        clearTimeout(timeoutId);
         if (quoteSubmit) {
           quoteSubmit.disabled = false;
           quoteSubmit.textContent = "Lähetä viesti";

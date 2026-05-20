@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const { handleChatRequest } = require("./lib/chat");
 const { handleContactRequest } = require("./lib/contact");
+const { getEmailProvider } = require("./lib/email");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,5 +37,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.listen(PORT, () => {
+  const emailProvider = getEmailProvider();
   console.log(`Sairas Media running on port ${PORT}`);
+  console.log(`Email provider: ${emailProvider || "NOT CONFIGURED"}`);
 });
