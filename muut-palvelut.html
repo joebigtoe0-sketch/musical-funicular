@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Muut palvelut | Sairas Media</title>
+  <meta name="description" content="Laserkaiverrus, 3D-tulostus ja suurkuvatulostus — fyysiset palvelut Sairas Medialta." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo-wrap" aria-label="Sairas Media etusivu">
+        <img src="logo.png" alt="Sairas Media logo" class="logo" />
+      </a>
+      <nav class="main-nav" aria-label="Päävalikko">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">☰</button>
+        <ul id="nav-menu" class="nav-menu">
+          <li><a href="verkkosivut.html">Verkkosivut</a></li>
+          <li><a href="sovellukset.html">Sovellukset</a></li>
+          <li><a href="ai-ratkaisut.html">AI-ratkaisut <span aria-hidden="true">✦</span></a></li>
+          <li><a href="graafinen-suunnittelu.html">Graafinen suunnittelu</a></li>
+          <li><a href="index.html#contact-form" class="nav-cta">Pyydä tarjous</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumbs"><a href="index.html">Etusivu</a> / Muut palvelut</div>
+        <h1>Laserkaiverrus, 3D-tulostus ja suurkuvatulostus</h1>
+        <p>
+          Digitaalisten palveluiden lisäksi toteutamme fyysisiä tuotteita ja painotöitä. Nämä palvelut ovat saatavilla
+          rinnakkain verkkosivujen, sovellusten ja AI-ratkaisujen kanssa.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section-gray">
+      <div class="container muut-services-grid">
+        <article class="service-card">
+          <h3>Laserkaiverrus</h3>
+          <p>Tarkat laserkaiverrukset puulle, metallille, akryylille ja nahalle. Personoidut lahjat, kyltit ja liikelahjat.</p>
+          <a href="laserkaiverrus.html" class="text-link">Lue lisää →</a>
+        </article>
+        <article class="service-card">
+          <h3>3D-tulostus</h3>
+          <p>Prototyypit, räätälöidyt osat ja koriste-esineet. Autamme myös 3D-mallinnuksessa.</p>
+          <a href="3d-tulostus.html" class="text-link">Lue lisää →</a>
+        </article>
+        <article class="service-card">
+          <h3>Suurkuvatulostus</h3>
+          <p>Bannerit, rollupit, teippaukset, tarrat ja julisteet sisä- ja ulkokäyttöön.</p>
+          <a href="suurkuvatulostus-printtituotteet.html" class="text-link">Lue lisää →</a>
+        </article>
+      </div>
+      <p class="services-more" style="margin-top: 40px">
+        <a href="index.html#contact-form" class="btn btn-primary">Pyydä tarjous</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-logo">Sairas Media</div>
+          <p class="footer-tagline">AI-ratkaisut, verkkosivut, sovellukset ja visuaalinen suunnittelu.</p>
+        </div>
+        <nav class="footer-links" aria-label="Palvelut">
+          <strong>Palvelut</strong>
+          <a href="ai-ratkaisut.html">AI-ratkaisut</a>
+          <a href="verkkosivut.html">Verkkosivut</a>
+          <a href="sovellukset.html">Sovellukset</a>
+          <a href="graafinen-suunnittelu.html">Graafinen suunnittelu</a>
+        </nav>
+        <nav class="footer-links" aria-label="Toiminnot">
+          <strong>Toiminnot</strong>
+          <a href="index.html#contact-form">Pyydä tarjous</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> Sairas Media. Kaikki oikeudet pidätetään.</span>
+        <span>Suomi</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="chatbot-config.js"></script>
+  <script src="script.js"></script>
+  <script src="chatbot.js"></script>
+</body>
+</html>

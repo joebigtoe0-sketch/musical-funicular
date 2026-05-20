@@ -1,0 +1,584 @@
+Sairas Media — Polish & Animation Specification
+Overview
+Three things to add:
+
+Scroll-triggered entry animations (elements fade/slide in as you scroll)
+Visual polish (better hero, floating CTA, section improvements)
+Floating contact button (always accessible without scrolling)
+
+
+1. ANIMATIONS — script.js additions
+Replace the entire script.js with this:
+javascriptdocument.addEventListener("DOMContentLoaded", () => {
+
+  // ─── Mobile nav toggle ───────────────────────────────────────
+  const navToggle = document.querySelector(".nav-toggle");
+  const navMenu = document.querySelector(".nav-menu");
+
+  if (navToggle && navMenu) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = navMenu.classList.toggle("open");
+      navToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+    navMenu.addEventListener("click", (e) => {
+      if (e.target instanceof HTMLElement && e.target.tagName === "A") {
+        navMenu.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  // ─── Year ────────────────────────────────────────────────────
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
+
+  // ─── Scroll animations ───────────────────────────────────────
+  // Add .reveal class to elements you want animated
+  // They start invisible and slide up into view
+
+  const revealEls = document.querySelectorAll(
+    ".service-card, .portfolio-item, .why-card, .price-card, " +
+    ".hero-card, .section-header, .two-column > *, .highlight-box, " +
+    ".trust-item, .contact-form"
+  );
+
+  // Set initial state — hidden and shifted down
+  revealEls.forEach((el, i) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(24px)";
+    el.style.transition = `opacity 0.5s ease ${(i % 4) * 0.08}s, transform 0.5s ease ${(i % 4) * 0.08}s`;
+  });
+
+  // Intersection Observer — triggers when element enters viewport
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0)";
+          observer.unobserve(el); // only animate once
+        }
+      });
+    },
+    {
+      threshold: 0.1,       // trigger when 10% visible
+      rootMargin: "0px 0px -40px 0px"  // trigger slightly before fully in view
+    }
+  );
+
+  revealEls.forEach((el) => observer.observe(el));
+
+  // ─── Hero elements animate on load ───────────────────────────
+  // Hero doesn't use scroll observer — animates immediately on load
+  const heroEls = document.querySelectorAll(
+    ".hero .eyebrow, .hero h1, .hero .hero-lead, .hero .hero-cta-group, .hero .trust-bar"
+  );
+
+  heroEls.forEach((el, i) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(20px)";
+    el.style.transition = `opacity 0.6s ease ${i * 0.1}s, transform 0.6s ease ${i * 0.1}s`;
+
+    // Small delay before starting so styles are applied
+    setTimeout(() => {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    }, 50);
+  });
+
+  // ─── Floating CTA button ─────────────────────────────────────
+  const floatingBtn = document.getElementById("floating-cta");
+  if (floatingBtn) {
+    // Show after scrolling past hero
+    const hero = document.querySelector(".hero, .page-hero");
+    const heroHeight = hero ? hero.offsetHeight : 400;
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > heroHeight) {
+        floatingBtn.classList.add("visible");
+      } else {
+        floatingBtn.classList.remove("visible");
+      }
+    }, { passive: true });
+  }
+
+  // ─── Nav scroll effect ───────────────────────────────────────
+  // Adds subtle shadow to nav when scrolled
+  const header = document.querySelector(".site-header");
+  if (header) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 10) {
+        header.style.boxShadow = "0 1px 20px rgba(0,0,0,0.08)";
+      } else {
+        header.style.boxShadow = "none";
+      }
+    }, { passive: true });
+  }
+
+  // ─── Smooth number counters (optional — for stats section) ───
+  function animateCounter(el) {
+    const target = parseInt(el.getAttribute("data-count"), 10);
+    const duration = 1500;
+    const start = performance.now();
+
+    function update(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
+      el.textContent = Math.round(eased * target).toLocaleString("fi-FI");
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Observe counter elements if they exist
+  const counters = document.querySelectorAll("[data-count]");
+  if (counters.length) {
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach((c) => counterObserver.observe(c));
+  }
+
+  // ─── Respect prefers-reduced-motion ─────────────────────────
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll("[style*='opacity']").forEach((el) => {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+      el.style.transition = "none";
+    });
+  }
+
+});
+
+2. FLOATING CTA BUTTON
+Add this HTML just before </body> in index.html and all subpages:
+html<a href="index.html#contact-form" id="floating-cta" class="floating-cta" aria-label="Pyydä tarjous">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+  </svg>
+  <span>Pyydä tarjous</span>
+</a>
+Add this CSS to styles.css:
+css/* Floating CTA */
+.floating-cta {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: white;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(1, 121, 166, 0.45);
+  cursor: pointer;
+  text-decoration: none;
+
+  /* Hidden by default */
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.15s, box-shadow 0.15s;
+}
+
+.floating-cta.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.floating-cta:hover {
+  background: var(--accent-dark);
+  box-shadow: 0 12px 40px rgba(1, 121, 166, 0.55);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .floating-cta span { display: none; }
+  .floating-cta { padding: 16px; }
+}
+
+3. VISUAL POLISH — styles.css additions
+Add these at the end of styles.css:
+css/* ── Hero improvements ─────────────────────────────────────── */
+
+/* Subtle grid pattern on hero background */
+.hero {
+  background-color: var(--bg-primary);
+  background-image:
+    linear-gradient(rgba(1, 121, 166, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1, 121, 166, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Blue accent line on hero h1 — makes headline more distinctive */
+.hero h1 {
+  position: relative;
+}
+
+/* Accent pill above hero h1 looks better with animation */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-light);
+  border: 1px solid rgba(1, 121, 166, 0.2);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+/* ── Section improvements ──────────────────────────────────── */
+
+/* Increase section padding for more breathing room */
+.section { padding: 80px 0; }
+
+/* Section header bottom margin */
+.section-header { margin-bottom: 56px; }
+
+/* ── Service card icon ─────────────────────────────────────── */
+
+/* Add an icon area at top of each service card */
+.service-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--accent-light);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--accent);
+  transition: background 0.2s;
+}
+
+.service-card:hover .service-icon {
+  background: var(--accent);
+  color: white;
+}
+
+/* ── Page hero improvements (subpages) ─────────────────────── */
+
+.page-hero {
+  padding: 56px 0 40px;
+  background: var(--bg-primary);
+  background-image:
+    linear-gradient(rgba(1, 121, 166, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1, 121, 166, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero h1 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.page-hero p {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ── Highlight box improvement ─────────────────────────────── */
+
+.highlight-box {
+  background: var(--accent-light);
+  border: 1px solid rgba(1, 121, 166, 0.2);
+  border-radius: 16px;
+  padding: 28px;
+  position: sticky;
+  top: 88px; /* sticks as you scroll the content column */
+}
+
+/* ── Button improvements ───────────────────────────────────── */
+
+/* Primary button gets a subtle shine on hover */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+/* ── Focus styles ──────────────────────────────────────────── */
+
+/* Better focus ring for accessibility */
+.btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Scroll indicator on hero ──────────────────────────────── */
+
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 48px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: bounce 2s infinite;
+}
+
+.scroll-indicator::after {
+  content: '';
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ── Stats/numbers section (optional add) ─────────────────── */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+
+.stat-item {
+  background: var(--bg-primary);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+4. INDEX.HTML — Add stats section + scroll indicator
+Add scroll indicator at bottom of hero text (before closing hero div):
+html<!-- Add after .trust-bar div -->
+<div class="scroll-indicator" aria-hidden="true">Vieritä alas</div>
+Add stats section after hero, before services:
+html<section class="section-white" style="padding: 0 0 80px;">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number" data-count="50">0</div>
+        <div class="stat-label">Projektia toteutettu</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" data-count="1">0</div>
+        <div class="stat-label">Arkipäivän vastausaika</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" data-count="6">0</div>
+        <div class="stat-label">Palvelua samasta paikasta</div>
+      </div>
+    </div>
+  </div>
+</section>
+Update the data-count values to match reality. Keep them honest — don't exaggerate.
+
+5. SERVICE CARD ICONS — index.html
+Add an icon to each service card. Insert before <h3> in each card:
+html<!-- Verkkosivut -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+</div>
+
+<!-- Sovellukset -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+</div>
+
+<!-- Graafinen suunnittelu -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+</div>
+
+<!-- Suurkuvatulostus -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+</div>
+
+<!-- Laserkaiverrus -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+</div>
+
+<!-- 3D-tulostus -->
+<div class="service-icon">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+</div>
+
+6. CONTACT FORM SECTION — improve the dark section
+The form at the bottom is fine where it is. Make it look better:
+In index.html, replace the contact-form section header with:
+html<header class="section-header">
+  <span class="eyebrow" style="background: rgba(1,121,166,0.2); border-color: rgba(1,121,166,0.3); color: #79d5ff;">
+    Ota yhteyttä
+  </span>
+  <h2>Pyydä ilmainen tarjous</h2>
+  <p>Vastaamme vuorokauden sisällä. Kerro lyhyesti tarpeesi ja aikataulusi.</p>
+</header>
+Also add a two-column layout to contact section — form on left, contact details on right instead of form stacked then info below:
+html<section id="contact-form" class="section section-dark">
+  <div class="container">
+    <header class="section-header">
+      <span class="eyebrow" style="background: rgba(1,121,166,0.2); border-color: rgba(1,121,166,0.3); color: #79d5ff;">Ota yhteyttä</span>
+      <h2>Pyydä ilmainen tarjous</h2>
+      <p>Vastaamme vuorokauden sisällä. Kerro lyhyesti tarpeesi ja aikataulusi.</p>
+    </header>
+
+    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 64px; align-items: start;">
+
+      <!-- Form -->
+      <form class="contact-form" action="#" method="post" style="max-width: none;">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="company">Yritys (valinnainen)</label>
+            <input type="text" id="company" name="company" placeholder="Yritys" />
+          </div>
+          <div class="form-field">
+            <label for="name">Nimi *</label>
+            <input type="text" id="name" name="name" placeholder="Nimi" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="phone">Puhelinnumero *</label>
+            <input type="tel" id="phone" name="phone" placeholder="Puhelinnumero" required />
+          </div>
+          <div class="form-field">
+            <label for="email">Sähköposti *</label>
+            <input type="email" id="email" name="email" placeholder="Sähköposti" required />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="message">Viesti</label>
+          <textarea id="message" name="message" rows="5" placeholder="Kerro lyhyesti projektistasi tai tarpeestasi..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Lähetä viesti</button>
+        <p style="font-size: 12px; color: #718096; margin-top: 12px; text-align: center;">
+          Vastaamme vuorokauden sisällä arkisin.
+        </p>
+      </form>
+
+      <!-- Contact details sidebar -->
+      <div style="padding-top: 4px;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 20px;">
+
+          <div>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #718096; margin-bottom: 6px;">Sähköposti</div>
+            <a href="mailto:info@sairasmedia.fi" style="color: #79d5ff; font-weight: 600; font-size: 15px;">info@sairasmedia.fi</a>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #718096; margin-bottom: 6px;">Puhelin</div>
+            <a href="tel:+358401234567" style="color: #79d5ff; font-weight: 600; font-size: 15px;">+358 40 123 4567</a>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #718096; margin-bottom: 6px;">Toimialue</div>
+            <p style="color: #e2e8f0; margin: 0; font-size: 14px;">Koko Suomi — myös etäprojektit</p>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #718096; margin-bottom: 6px;">Vastausaika</div>
+            <p style="color: #e2e8f0; margin: 0; font-size: 14px;">Vuorokauden sisällä arkisin</p>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px;">
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #718096; margin-bottom: 12px;">Palvelut</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="font-size: 12px; background: rgba(1,121,166,0.2); color: #79d5ff; border: 1px solid rgba(1,121,166,0.3); padding: 4px 10px; border-radius: 20px;">Verkkosivut</span>
+              <span style="font-size: 12px; background: rgba(1,121,166,0.2); color: #79d5ff; border: 1px solid rgba(1,121,166,0.3); padding: 4px 10px; border-radius: 20px;">Sovellukset</span>
+              <span style="font-size: 12px; background: rgba(1,121,166,0.2); color: #79d5ff; border: 1px solid rgba(1,121,166,0.3); padding: 4px 10px; border-radius: 20px;">Graafinen suunnittelu</span>
+              <span style="font-size: 12px; background: rgba(1,121,166,0.2); color: #79d5ff; border: 1px solid rgba(1,121,166,0.3); padding: 4px 10px; border-radius: 20px;">Laserkaiverrus</span>
+              <span style="font-size: 12px; background: rgba(1,121,166,0.2); color: #79d5ff; border: 1px solid rgba(1,121,166,0.3); padding: 4px 10px; border-radius: 20px;">3D-tulostus</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+Add to styles.css:
+css@media (max-width: 900px) {
+  #contact-form .container > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+7. REMOVE CONTACT INFO SECTION
+Since contact details are now inside the form section, remove the separate #contact-info section from index.html entirely. It's redundant now.
+
+Summary For Agent
+Files to edit:
+
+script.js — replace entirely with new version above
+styles.css — add all new CSS from section 2 and 3 above
+index.html:
+
+Add id="floating-cta" button before </body>
+Add grid pattern and scroll indicator to hero
+Add stats section after hero
+Add service icons to each service card
+Replace contact form section with new two-column version
+Remove the separate #contact-info section
+
+
+All other HTML files — add floating CTA button before </body>
+
+Do NOT change:
+
+Any Finnish copy text
+The overall page structure
+Any existing classes that aren't mentioned above
+The footer
