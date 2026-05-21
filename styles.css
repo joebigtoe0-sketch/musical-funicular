@@ -2026,6 +2026,137 @@ a.hero-card {
     display: none;
   }
 
+/* Cookie consent */
+.cookie-consent {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  padding: 16px;
+  background: rgba(10, 22, 40, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.cookie-consent-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 22px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.cookie-consent-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.cookie-consent-inner p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.cookie-consent-links {
+  margin-bottom: 14px !important;
+}
+
+.cookie-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cookie-consent-actions .btn {
+  flex: 1;
+  min-width: 140px;
+  font-size: 14px;
+  padding: 0.7rem 1rem;
+}
+
+body.cookie-banner-open #sairas-chatbot .chat-toggle {
+  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: #718096;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer-link-btn:hover,
+.footer-link-btn:focus-visible {
+  color: #79d5ff;
+}
+
+.site-footer .footer-legal a {
+  color: #718096;
+  font-size: 12px;
+}
+
+.site-footer .footer-legal a:hover {
+  color: #79d5ff;
+}
+
+.legal-content {
+  max-width: 720px;
+}
+
+.legal-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.legal-content h2:first-child {
+  margin-top: 0;
+}
+
+.legal-content p,
+.legal-content li {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.legal-content ul {
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cookie-consent-actions {
+    flex-direction: column;
+  }
+
+  .cookie-consent-actions .btn {
+    width: 100%;
+  }
+}
+
   .chat-toggle {
     padding: 16px;
   }
