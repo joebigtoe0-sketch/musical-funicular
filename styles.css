@@ -2026,6 +2026,11 @@ a.hero-card {
     display: none;
   }
 
+  .chat-toggle {
+    padding: 16px;
+  }
+}
+
 /* Cookie consent */
 .cookie-consent {
   position: fixed;
@@ -2033,53 +2038,239 @@ a.hero-card {
   right: 0;
   bottom: 0;
   z-index: 10000;
-  padding: 16px;
-  background: rgba(10, 22, 40, 0.55);
-  backdrop-filter: blur(6px);
+  padding: 20px clamp(16px, 3vw, 40px) max(20px, env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
 }
 
-.cookie-consent-inner {
-  max-width: 560px;
+.cookie-consent-card {
+  pointer-events: auto;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 20px 22px;
+  padding: 28px 32px;
   background: var(--bg-primary);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  border-radius: 20px;
+  box-shadow:
+    0 4px 24px rgba(13, 17, 23, 0.08),
+    0 16px 48px rgba(13, 17, 23, 0.12);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.cookie-consent-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .cookie-consent-title {
-  font-weight: 700;
-  font-size: 16px;
-  margin: 0 0 8px;
-}
-
-.cookie-consent-inner p {
-  font-size: 14px;
-  color: var(--text-secondary);
   margin: 0 0 10px;
-  line-height: 1.5;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.3;
 }
 
-.cookie-consent-links {
-  margin-bottom: 14px !important;
+.cookie-consent-text > p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.cookie-consent-more {
+  margin: 12px 0 0 !important;
+}
+
+.cookie-consent-more a {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cookie-consent-more a:hover,
+.cookie-consent-more a:focus-visible {
+  color: var(--accent-dark);
 }
 
 .cookie-consent-actions {
+  flex: 0 0 min(240px, 100%);
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
 }
 
-.cookie-consent-actions .btn {
-  flex: 1;
-  min-width: 140px;
+.cookie-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.cookie-btn-primary {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(1, 121, 166, 0.3);
+}
+
+.cookie-btn-primary:hover,
+.cookie-btn-primary:focus-visible {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(1, 121, 166, 0.38);
+}
+
+.cookie-btn-outline {
+  background: var(--bg-primary);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+
+.cookie-btn-outline:hover,
+.cookie-btn-outline:focus-visible {
+  background: var(--accent-light);
+  transform: translateY(-1px);
+}
+
+.cookie-consent-details {
+  pointer-events: auto;
+  max-width: 1080px;
+  margin: 12px auto 0;
+  padding: 0 4px;
+}
+
+.cookie-consent-details-inner {
+  padding: 20px 24px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(13, 17, 23, 0.08);
+}
+
+.cookie-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cookie-setting-row:first-child {
+  padding-top: 0;
+}
+
+.cookie-setting-row:last-of-type {
+  border-bottom: none;
+  margin-bottom: 16px;
+}
+
+.cookie-setting-row strong {
+  display: block;
   font-size: 14px;
-  padding: 0.7rem 1rem;
+  margin-bottom: 4px;
+}
+
+.cookie-setting-row p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.cookie-setting-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+
+.cookie-toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.cookie-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.cookie-toggle-ui {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--border);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+.cookie-toggle-ui::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.cookie-toggle input:checked + .cookie-toggle-ui {
+  background: var(--accent);
+}
+
+.cookie-toggle input:checked + .cookie-toggle-ui::after {
+  transform: translateX(20px);
+}
+
+.cookie-toggle input:focus-visible + .cookie-toggle-ui {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cookie-btn-save {
+  width: 100%;
+  max-width: 280px;
 }
 
 body.cookie-banner-open #sairas-chatbot .chat-toggle {
-  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+body.cookie-banner-open.cookie-consent--settings-open #sairas-chatbot .chat-toggle {
+  bottom: calc(14rem + env(safe-area-inset-bottom, 0px));
 }
 
 .footer-legal {
@@ -2141,6 +2332,19 @@ body.cookie-banner-open #sairas-chatbot .chat-toggle {
   margin-bottom: 1rem;
 }
 
+@media (max-width: 768px) {
+  .cookie-consent-card {
+    flex-direction: column;
+    padding: 22px 20px;
+    gap: 20px;
+  }
+
+  .cookie-consent-actions {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .footer-bottom {
     flex-direction: column;
@@ -2148,16 +2352,12 @@ body.cookie-banner-open #sairas-chatbot .chat-toggle {
     gap: 10px;
   }
 
-  .cookie-consent-actions {
-    flex-direction: column;
+  .cookie-consent {
+    padding: 12px 12px max(12px, env(safe-area-inset-bottom, 0px));
   }
 
-  .cookie-consent-actions .btn {
-    width: 100%;
-  }
-}
-
-  .chat-toggle {
-    padding: 16px;
+  .cookie-consent-card {
+    border-radius: 16px;
+    padding: 20px 18px;
   }
 }
