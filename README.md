@@ -64,6 +64,16 @@ Hakukoneet: lähetä sitemap Google Search Consolessa (`https://sairasmedia.fi/s
 
 Puhelin: päivitä `lib/site.js` jos numero muuttuu.
 
+## Google Analytics 4
+
+1. [analytics.google.com](https://analytics.google.com) → Admin → **Data stream** → Web → kopioi **Measurement ID** (`G-...`)
+2. Railway → Variables → `GA_MEASUREMENT_ID=G-XXXXXXXXXX`
+3. Redeploy — skripti lisätään automaattisesti kaikille HTML-sivuille
+
+**Scrolls, outbound clicks, file downloads:** GA4 → Admin → Data streams → valitse stream → **Enhanced measurement** → päälle (oletuksena usein jo päällä).
+
+Testaa: GA → Reports → Realtime — avaa sivusto toisessa välilehdessä.
+
 ## Railway-deploy
 
 Katso alla olevat ohjeet tai [Railway docs](https://docs.railway.app/).

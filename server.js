@@ -8,6 +8,7 @@ const { handleChatRequest } = require("./lib/chat");
 const { handleContactRequest } = require("./lib/contact");
 const { getEmailProvider } = require("./lib/email");
 const { getSeoInjection, getFaviconTags, buildSitemap, buildRobots, PAGE_META } = require("./lib/seo");
+const { getMeasurementId } = require("./lib/analytics");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -134,4 +135,5 @@ app.listen(PORT, () => {
   console.log(`Sairas Media running on port ${PORT}`);
   console.log(`Email provider: ${emailProvider || "NOT CONFIGURED"}`);
   console.log(`SITE_URL: ${SITE_URL || "NOT SET (SEO canonicals disabled)"}`);
+  console.log(`Google Analytics: ${getMeasurementId() || "NOT SET"}`);
 });
