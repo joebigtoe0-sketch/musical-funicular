@@ -136,4 +136,5 @@ app.listen(PORT, () => {
   console.log(`Email provider: ${emailProvider || "NOT CONFIGURED"}`);
   console.log(`SITE_URL: ${SITE_URL || "NOT SET (SEO canonicals disabled)"}`);
   console.log(`Google Analytics: ${getMeasurementId() || "NOT SET"}`);
+  console.log(`Calendly: ${process.env.SAIRAS_CALENDLY_URL || "NOT SET"}`);
 });

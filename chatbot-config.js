@@ -1,3 +1,3 @@
-// Julkinen asetus: Calendly-linkki sivuston napeissa ja chatbotissa.
-// API-avain: Railway → Variables → ANTHROPIC_API_KEY (katso .env.example)
-window.SAIRAS_CALENDLY_URL = "https://calendly.com/sairasmedia/alkukartoitus";
+// Calendly-linkki injektoidaan palvelimelta (SAIRAS_CALENDLY_URL Railway Variables).
+// Paikallinen dev: aseta sama .env.local-tiedostossa.
+// Älä hardcodaa URL:ia tähän — se ohittaisi Railway-asetuksen.
