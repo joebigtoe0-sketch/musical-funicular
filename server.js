@@ -29,6 +29,10 @@ app.get("/sitemap.xml", (_req, res) => {
   res.type("application/xml").send(buildSitemap(SITE_URL));
 });
 
+app.get("/.well-known/llms.txt", (_req, res) => {
+  res.redirect(301, "/llms.txt");
+});
+
 app.get("/robots.txt", (_req, res) => {
   if (!SITE_URL) {
     return res.type("text/plain").send("User-agent: *\nAllow: /\n");

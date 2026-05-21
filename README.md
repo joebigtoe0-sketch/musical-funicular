@@ -42,8 +42,10 @@ SITE_URL=https://sairasmedia.fi
 
 Tämä aktivoi canonical-linkit, Open Graph, JSON-LD, `sitemap.xml` ja `robots.txt`.
 
-- **`/llms.txt`** — tiivis yhteenveto AI-assistenteille (ChatGPT, Claude, Perplexity)
-- **`/llms-full.txt`** — laajempi referenssi
+- **`/llms.txt`** — indeksi AI-crawlereille ([llmstxt.org](https://llmstxt.org/))
+- **`/llms/*.md`** — markdown-peilit sivuista (helpompi AI:lle kuin HTML)
+- **`/llms-full.md`** ja **`/llms-full.txt`** — laaja referenssi
+- **`/.well-known/llms.txt`** — ohjaa → `/llms.txt`
 - Favicon: käyttää suoraan `/logo.png`
 
 Hakukoneet: lähetä sitemap Google Search Consolessa (`https://sairasmedia.fi/sitemap.xml`).

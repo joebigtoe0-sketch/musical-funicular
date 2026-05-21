@@ -22,6 +22,65 @@ class SairasChatbot {
     return el.innerHTML;
   }
 
+  normalizeUrl(raw) {
+    const match = raw.match(/^(https?:\/\/[^\s]+?)([.,;:!?)]+)?$/);
+    if (!match) return { url: raw, trailing: "" };
+    return { url: match[1], trailing: match[2] || "" };
+  }
+
+  getLinkLabel(url) {
+    if (/calendly\.com/i.test(url)) return "Varaa ilmainen kartoitus";
+    if (/mailto:/i.test(url)) return "Lähetä sähköposti";
+    if (/sairasmedia\.fi/i.test(url)) return "Avaa sairasmedia.fi";
+    return "Avaa linkki";
+  }
+
+  linkButtonHtml(url) {
+    const { url: href } = this.normalizeUrl(url);
+    const label = this.escapeHtml(this.getLinkLabel(href));
+    const safeHref = this.escapeHtml(href);
+    return `<a class="chat-link-btn" href="${safeHref}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  }
+
+  formatMessageHtml(content) {
+    const urlRegex = /https?:\/\/[^\s<>"')\]]+/gi;
+    let html = "";
+    let lastIndex = 0;
+    const buttons = [];
+
+    for (const match of content.matchAll(urlRegex)) {
+      const rawUrl = match[0];
+      const { url, trailing } = this.normalizeUrl(rawUrl);
+      const before = content.slice(lastIndex, match.index);
+      if (before) {
+        html += this.escapeHtml(before).replace(/\n/g, "<br>");
+      }
+      buttons.push(this.linkButtonHtml(url));
+      if (trailing) {
+        html += this.escapeHtml(trailing);
+      }
+      lastIndex = match.index + rawUrl.length;
+    }
+
+    const rest = content.slice(lastIndex);
+    if (rest) {
+      html += this.escapeHtml(rest).replace(/\n/g, "<br>");
+    }
+
+    if (buttons.length) {
+      html += `<div class="chat-bubble-actions">${buttons.join("")}</div>`;
+    }
+
+    return html || this.escapeHtml(content).replace(/\n/g, "<br>");
+  }
+
+  formatBubbleContent(msg) {
+    if (msg.role === "assistant") {
+      return this.formatMessageHtml(msg.content);
+    }
+    return this.escapeHtml(msg.content).replace(/\n/g, "<br>");
+  }
+
   async sendMessage(userMessage) {
     this.messages.push({ role: "user", content: userMessage });
     this.renderMessages();
@@ -220,7 +279,7 @@ class SairasChatbot {
     container.innerHTML = this.messages
       .map(
         (msg) =>
-          `<div class="chat-message ${msg.role}"><div class="chat-bubble">${this.escapeHtml(msg.content).replace(/\n/g, "<br>")}</div></div>`
+          `<div class="chat-message ${msg.role}"><div class="chat-bubble">${this.formatBubbleContent(msg)}</div></div>`
       )
       .join("");
 
