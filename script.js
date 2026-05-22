@@ -96,13 +96,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── Smooth number counters (optional — for stats section) ───
   function animateCounter(el) {
     const target = parseInt(el.getAttribute("data-count"), 10);
+    const suffix = el.getAttribute("data-count-suffix") || "";
     const duration = 1500;
     const start = performance.now();
 
     function update(now) {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(eased * target).toLocaleString("fi-FI");
+      const value = Math.round(eased * target).toLocaleString("fi-FI");
+      el.textContent = progress >= 1 ? value + suffix : value;
       if (progress < 1) requestAnimationFrame(update);
     }
     requestAnimationFrame(update);
