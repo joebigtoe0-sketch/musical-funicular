@@ -46,7 +46,7 @@ Tämä aktivoi canonical-linkit, Open Graph, JSON-LD, `sitemap.xml` ja `robots.t
 - **`/llms/*.md`** — markdown-peilit sivuista (helpompi AI:lle kuin HTML)
 - **`/llms-full.md`** ja **`/llms-full.txt`** — laaja referenssi
 - **`/.well-known/llms.txt`** — ohjaa → `/llms.txt`
-- Favicon: käyttää suoraan `/logo.png`
+- Favicon: `/icon.png` (192×192); header-logo pysyy `/logo.png`
 
 Hakukoneet: lähetä sitemap Google Search Consolessa (`https://sairasmedia.fi/sitemap.xml`).
 
